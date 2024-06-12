@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'post_notifier.dart';
 
 class CommunityScreen extends StatefulWidget {
   @override
@@ -43,6 +45,67 @@ class _CommunityScreenState extends State<CommunityScreen> {
     setState(() {
       _selectedFilter = filter;
     });
+  }
+
+  void _showAddPostDialog() {
+    String userName = '';
+    String title = '';
+    String content = '';
+    String tag = '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('새 글 추가'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                onChanged: (value) {
+                  userName = value;
+                },
+                decoration: InputDecoration(labelText: '이름'),
+              ),
+              TextField(
+                onChanged: (value) {
+                  title = value;
+                },
+                decoration: InputDecoration(labelText: '제목'),
+              ),
+              TextField(
+                onChanged: (value) {
+                  content = value;
+                },
+                decoration: InputDecoration(labelText: '내용'),
+              ),
+              TextField(
+                onChanged: (value) {
+                  tag = value;
+                },
+                decoration: InputDecoration(labelText: '해시태그'),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('추가'),
+              onPressed: () {
+                final postNotifier = Provider.of<PostNotifier>(context, listen: false);
+                postNotifier.addPost(Post(userName: userName, title: title, content: content, tag: tag));
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -112,16 +175,26 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              // Example of a post card, you might want to load real data or make them dynamic based on the selected category or filter
-              PostCard(
-                userName: '김김김민교교',
-                title: '모바일플랫폼 다트언어 뿌실 팟 관@@@@@',
-                content: '안녕하세요 모바일플랫폼 2분반 김민교입니다.\n같이 스터디해요 ~^^~',
-                tag: '# 너에게 Dart기를,,,',
+              Consumer<PostNotifier>(
+                builder: (context, postNotifier, child) {
+                  return Column(
+                    children: postNotifier.posts.map((post) => PostCard(
+                      userName: post.userName,
+                      title: post.title,
+                      content: post.content,
+                      tag: post.tag,
+                    )).toList(),
+                  );
+                },
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddPostDialog,
+        child: Icon(Icons.add),
+        backgroundColor: Colors.orange,
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

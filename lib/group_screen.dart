@@ -20,7 +20,7 @@ class _GroupScreenState extends State<GroupScreen> {
         Navigator.pushNamed(context, '/myStudy');
         break;
       case 2:
-        Navigator.pushNamed(context, '/groupStudy');
+        Navigator.pushNamed(context, '/group');
         break;
       case 3:
         Navigator.pushNamed(context, '/community');
@@ -45,7 +45,7 @@ class _GroupScreenState extends State<GroupScreen> {
                   height: 150,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/Group_6876.png'),
+                      image: AssetImage('assets/images/Group 6876.png'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -78,8 +78,11 @@ class _GroupScreenState extends State<GroupScreen> {
                       GroupCard(
                         title: 'Group1',
                         description: 'SW융합대학',
-                        members: '4 Members',
+                        members: '3 Members',
                         color: Color(0xFFAFDBC5),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/group_1');
+                        },
                       ),
                       GroupCard(
                         title: 'Group2',
@@ -151,61 +154,66 @@ class GroupCard extends StatelessWidget {
   final String description;
   final String members;
   final Color color;
+  final VoidCallback? onTap;
 
   GroupCard({
     required this.title,
     required this.description,
     required this.members,
     required this.color,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.42,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: Color(0xFF3F414E),
-              fontSize: 18,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w700,
-              height: 1.2,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.42,
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                color: Color(0xFF3F414E),
+                fontSize: 18,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w700,
+                height: 1.2,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            description,
-            style: TextStyle(
-              color: Color(0x91231F20),
-              fontSize: 11,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w500,
-              height: 1.2,
-              letterSpacing: 0.55,
+            SizedBox(height: 8),
+            Text(
+              description,
+              style: TextStyle(
+                color: Color(0x91231F20),
+                fontSize: 11,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w500,
+                height: 1.2,
+                letterSpacing: 0.55,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            members,
-            style: TextStyle(
-              color: Color(0x91231F20),
-              fontSize: 11,
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w500,
-              height: 1.2,
-              letterSpacing: 0.55,
+            SizedBox(height: 8),
+            Text(
+              members,
+              style: TextStyle(
+                color: Color(0x91231F20),
+                fontSize: 11,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w500,
+                height: 1.2,
+                letterSpacing: 0.55,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

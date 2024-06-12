@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "317372839843",
-    "project_id": "moblie-platform-database",
-    "storage_bucket": "moblie-platform-database.appspot.com"
+    "project_number": "760689377309",
+    "project_id": "mobile-platform-database",
+    "storage_bucket": "mobile-platform-database.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:317372839843:android:89746ed31ce6e8bc2f8c16",
+        "mobilesdk_app_id": "1:760689377309:android:486240cbd2d0b7eea086f4",
         "android_client_info": {
           "package_name": "com.example.mobile_project"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBmi1KYOyX3R9ZkYfKky5Rm6one3_ycDDk"
+          "current_key": "AIzaSyAqY3lNycA_ZdEGOe7FHbSXzmPBH9Y_2z4"
         }
       ],
       "services": {
