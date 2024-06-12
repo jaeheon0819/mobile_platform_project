@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'shared_state.dart';
+import 'group_screen.dart';
+import 'mystudy_screen.dart';
+import 'package:intl/intl.dart';  // 날짜 포맷을 위해 intl 패키지 사용
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,6 +13,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  final String todayDate = DateFormat('yyyy MM dd').format(DateTime.now());
+  final String todayDay = DateFormat('EEEE').format(DateTime.now());
 
   void _onItemTapped(int index) {
     setState(() {
@@ -23,9 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.pushReplacementNamed(context, '/myStudy');
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/groupStudy');  // Add this case
+        Navigator.pushReplacementNamed(context, '/groupStudy');
         break;
-    // 추가적인 화면이 있다면 여기 추가
     }
   }
 
@@ -79,8 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     return StudyTimeCard(
                       title: "Today's Study Time",
                       time: _formatDuration(totalStudyTime),
-                      date: '2024 04 24',
-                      day: 'Wednesday',
+                      date: todayDate,
+                      day: todayDay,
                       backgroundColor: Colors.red[100]!,
                     );
                   },
@@ -112,8 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     return StudyTimeCard(
                       title: "Yesterday's Study Time",
                       time: _formatDuration(yesterdayStudyTime),
-                      date: '2024 04 24',
-                      day: 'Wednesday',
+                      date: todayDate, // 여기서도 같은 날짜를 표시합니다.
+                      day: todayDay, // 여기서도 같은 요일을 표시합니다.
                       backgroundColor: Colors.red[100]!,
                     );
                   },
@@ -171,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.group),
-            label: 'Group Study',  // Update the label here
+            label: 'Group Study',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.forum),

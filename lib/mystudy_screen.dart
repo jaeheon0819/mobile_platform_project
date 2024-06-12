@@ -24,6 +24,15 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
       case 1:
         Navigator.pushReplacementNamed(context, '/myStudy');
         break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/groupStudy');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/community');
+        break;
+      case 4:
+        Navigator.pushReplacementNamed(context, '/setting');
+        break;
     }
   }
 
@@ -69,12 +78,18 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
                       color: Colors.black,
                     ),
                   ),
-                  Text(
-                    "3시간 30분",
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  ValueListenableBuilder<List<Course>>(
+                    valueListenable: courseNotifier,
+                    builder: (context, List<Course> courses, child) {
+                      Duration totalStudyTime = courseNotifier.getTotalStudyTime();
+                      return Text(
+                        _formatDuration(totalStudyTime),
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -169,5 +184,12 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return '${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds';
   }
 }
