@@ -28,14 +28,6 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
   }
 
   void _toggleCourseStatus(String courseName) {
-    var course = courseNotifier.courses.firstWhere((course) => course.name == courseName);
-    if (course.isStudying) {
-      _timer?.cancel();
-    } else {
-      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        courseNotifier.updateStudyTime(courseName, Duration(seconds: 1));
-      });
-    }
     courseNotifier.toggleCourseStatus(courseName);
   }
 

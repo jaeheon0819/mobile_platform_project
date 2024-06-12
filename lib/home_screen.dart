@@ -26,6 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _toggleCourseStatus(String courseName) {
+    courseNotifier.toggleCourseStatus(courseName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset('assets/logo.png', height: 50),
+                    // Image.asset('assets/logo.png', height: 50),
                     const Text(
                       '단국대 Moon',
                       style: TextStyle(
@@ -65,12 +69,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                StudyTimeCard(
-                  title: "Today's Study Time",
-                  time: '00:00:00',
-                  date: '2024 04 24',
-                  day: 'Wednesday',
-                  backgroundColor: Colors.red[100]!,
+                ValueListenableBuilder<List<Course>>(
+                  valueListenable: courseNotifier,
+                  builder: (context, List<Course> courses, child) {
+                    Duration totalStudyTime = courseNotifier.getTotalStudyTime();
+                    return StudyTimeCard(
+                      title: "Today's Study Time",
+                      time: _formatDuration(totalStudyTime),
+                      date: '2024 04 24',
+                      day: 'Wednesday',
+                      backgroundColor: Colors.red[100]!,
+                    );
+                  },
                 ),
                 const SizedBox(height: 10),
                 ValueListenableBuilder<List<Course>>(
@@ -82,8 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: CourseCard(
                             title: course.name,
                             time: _formatDuration(course.studyTime),
-                            buttonText: 'START',
+                            buttonText: course.isStudying ? 'STOP' : 'START',
                             backgroundColor: Colors.orange[100]!,
+                            onPressed: () => _toggleCourseStatus(course.name),
                           ),
                         );
                       }).toList(),
@@ -238,12 +249,14 @@ class CourseCard extends StatelessWidget {
   final String time;
   final String buttonText;
   final Color backgroundColor;
+  final VoidCallback onPressed;
 
   const CourseCard({
     required this.title,
     required this.time,
     required this.buttonText,
     required this.backgroundColor,
+    required this.onPressed,
   });
 
   @override
@@ -276,9 +289,7 @@ class CourseCard extends StatelessWidget {
           Align(
             alignment: Alignment.bottomRight,
             child: ElevatedButton(
-              onPressed: () {
-                // 과목명 입력 로직 추가
-              },
+              onPressed: onPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 shape: RoundedRectangleBorder(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
 
@@ -5,6 +6,7 @@ class Course {
   String name;
   Duration studyTime;
   bool isStudying;
+  Timer? timer;
 
   Course({required this.name, this.studyTime = Duration.zero, this.isStudying = false});
 }
@@ -26,14 +28,20 @@ class CourseNotifier extends ValueNotifier<List<Course>> {
 
   void toggleCourseStatus(String name) {
     var course = value.firstWhere((course) => course.name == name);
+    if (course.isStudying) {
+      course.timer?.cancel();
+    } else {
+      course.timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        course.studyTime += Duration(seconds: 1);
+        notifyListeners();
+      });
+    }
     course.isStudying = !course.isStudying;
     notifyListeners();
   }
 
-  void updateStudyTime(String name, Duration studyTime) {
-    var course = value.firstWhere((course) => course.name == name);
-    course.studyTime += studyTime;
-    notifyListeners();
+  Duration getTotalStudyTime() {
+    return value.fold(Duration.zero, (sum, course) => sum + course.studyTime);
   }
 }
 
