@@ -13,6 +13,7 @@ class Course {
 
 class CourseNotifier extends ValueNotifier<List<Course>> {
   CourseNotifier() : super([]);
+  Duration yesterdayStudyTime = Duration.zero;
 
   UnmodifiableListView<Course> get courses => UnmodifiableListView(value);
 
@@ -42,6 +43,11 @@ class CourseNotifier extends ValueNotifier<List<Course>> {
 
   Duration getTotalStudyTime() {
     return value.fold(Duration.zero, (sum, course) => sum + course.studyTime);
+  }
+
+  void setYesterdayStudyTime(Duration duration) {
+    yesterdayStudyTime = duration;
+    notifyListeners();
   }
 }
 

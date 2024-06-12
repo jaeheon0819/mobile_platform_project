@@ -22,6 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         Navigator.pushReplacementNamed(context, '/myStudy');
         break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/groupStudy');  // Add this case
+        break;
     // 추가적인 화면이 있다면 여기 추가
     }
   }
@@ -43,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Image.asset('assets/logo.png', height: 50),
+                    Image.asset('assets/logo.png', height: 50),
                     const Text(
                       '단국대 Moon',
                       style: TextStyle(
@@ -102,12 +105,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(height: 20),
-                StudyTimeCard(
-                  title: "Yesterday's Study Time",
-                  time: '03:30:00',
-                  date: '2024 04 24',
-                  day: 'Wednesday',
-                  backgroundColor: Colors.red[100]!,
+                ValueListenableBuilder<List<Course>>(
+                  valueListenable: courseNotifier,
+                  builder: (context, List<Course> courses, child) {
+                    Duration yesterdayStudyTime = courseNotifier.yesterdayStudyTime;
+                    return StudyTimeCard(
+                      title: "Yesterday's Study Time",
+                      time: _formatDuration(yesterdayStudyTime),
+                      date: '2024 04 24',
+                      day: 'Wednesday',
+                      backgroundColor: Colors.red[100]!,
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -162,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.group),
-            label: 'Group Study',
+            label: 'Group Study',  // Update the label here
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.forum),
