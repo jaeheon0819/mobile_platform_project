@@ -12,6 +12,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Timer _timer;
   Duration _studyTime = Duration.zero;
   Duration _yesterdayStudyTime = const Duration(hours: 3, minutes: 30);
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -31,6 +32,21 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _timer.cancel();
     super.dispose();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/myStudy');
+        break;
+    // 추가적인 화면이 있다면 여기 추가
+    }
   }
 
   @override
@@ -173,9 +189,10 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Setting',
           ),
         ],
+        currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+        onTap: _onItemTapped,
       ),
     );
   }
