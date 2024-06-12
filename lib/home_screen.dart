@@ -54,11 +54,18 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Image.asset('assets/logo.png', height: 50),
                     const Text(
-                      '단국대 Moon',
+                      '단국대에서  ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Image.asset('assets/KakaoTalk_Photo_2024-06-13-02-52-22.png', height: 70),
+                    const Text(
+                      '  공부할래??',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -100,17 +107,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   valueListenable: courseNotifier,
                   builder: (context, List<Course> courses, child) {
                     return Row(
-                      children: courses.map((course) {
-                        return Expanded(
-                          child: CourseCard(
-                            title: course.name,
-                            time: _formatDuration(course.studyTime),
-                            buttonText: course.isStudying ? 'STOP' : 'START',
-                            backgroundColor: Colors.orange[100]!,
-                            onPressed: () => _toggleCourseStatus(course.name),
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              for (var course in courses)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: CourseCard(
+                                    title: course.name,
+                                    time: _formatDuration(course.studyTime),
+                                    buttonText: course.isStudying ? 'STOP' : 'START',
+                                    backgroundColor: Colors.orange[100]!,
+                                    onPressed: () => _toggleCourseStatus(course.name),
+                                  ),
+                                ),
+                            ],
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -124,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       time: _formatDuration(yesterdayStudyTime),
                       date: todayDate, // 여기서도 같은 날짜를 표시합니다.
                       day: todayDay, // 여기서도 같은 요일을 표시합니다.
-                      backgroundColor: Colors.red[100]!,
+                      backgroundColor: Colors.pinkAccent[100]!,
                     );
                   },
                 ),
@@ -231,25 +246,30 @@ class StudyTimeCard extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  '$date  |  $day',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 5),
-          Text(
-            '$date  |  $day',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 10),
           Text(
             time,
             style: const TextStyle(
@@ -292,7 +312,7 @@ class CourseCard extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
