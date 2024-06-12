@@ -3,7 +3,7 @@ import 'home_screen.dart'; // 홈 화면
 import 'login_screen.dart';
 
 import 'mystudy_screen.dart'; // 공부 기록 화면
-// import 'groups_screen.dart'; // 그룹 화면
+import 'group_screen.dart'; // 그룹 화면
 // import 'community_screen.dart'; // 커뮤니티 화면
 // import 'settings_screen.dart'; // 설정 화면
 import 'dart:async';
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/home': (context) => const HomeScreen(),
         '/myStudy': (context) => MyStudyScreen(),
-        // '/groups': (context) => GroupsScreen(),
+        '/group': (context) => GroupScreen(),
       },
     );
   }
