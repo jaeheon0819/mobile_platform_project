@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/community_screen.dart';
 import 'home_screen.dart'; // 홈 화면
 import 'login_screen.dart';
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/myStudy': (context) => MyStudyScreen(),
         '/group': (context) => GroupScreen(),
         '/setting': (context) => SettingsScreen(),
+        '/community': (context) => CommunityScreen()
       },
     );
   }

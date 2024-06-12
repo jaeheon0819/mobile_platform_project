@@ -6,7 +6,9 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  int _selectedIndex = 3;
+  int _selectedIndex = 3; // 초기 인덱스를 Community로 설정
+  String _selectedCategory = '전체';
+  String _selectedFilter = '전체';
 
   void _onItemTapped(int index) {
     setState(() {
@@ -31,6 +33,17 @@ class _CommunityScreenState extends State<CommunityScreen> {
     }
   }
 
+  void _onCategorySelected(String category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+  }
+
+  void _onFilterSelected(String filter) {
+    setState(() {
+      _selectedFilter = filter;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,23 +95,24 @@ class _CommunityScreenState extends State<CommunityScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  CategoryTab(title: '전체', isSelected: true),
-                  CategoryTab(title: '자유'),
-                  CategoryTab(title: '질문'),
-                  CategoryTab(title: '모집'),
+                  CategoryTab(title: '전체', isSelected: _selectedCategory == '전체', onSelect: _onCategorySelected),
+                  CategoryTab(title: '자유', isSelected: _selectedCategory == '자유', onSelect: _onCategorySelected),
+                  CategoryTab(title: '질문', isSelected: _selectedCategory == '질문', onSelect: _onCategorySelected),
+                  CategoryTab(title: '모집', isSelected: _selectedCategory == '모집', onSelect: _onCategorySelected),
                 ],
               ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  CategoryFilter(title: '전체', isSelected: true),
-                  CategoryFilter(title: '문과대학'),
-                  CategoryFilter(title: 'SW융합대학'),
-                  CategoryFilter(title: '법과대학'),
+                  CategoryFilter(title: '전체', isSelected: _selectedFilter == '전체', onSelect: _onFilterSelected),
+                  CategoryFilter(title: '문과대학', isSelected: _selectedFilter == '문과대학', onSelect: _onFilterSelected),
+                  CategoryFilter(title: 'SW융합대학', isSelected: _selectedFilter == 'SW융합대학', onSelect: _onFilterSelected),
+                  CategoryFilter(title: '법과대학', isSelected: _selectedFilter == '법과대학', onSelect: _onFilterSelected),
                 ],
               ),
               const SizedBox(height: 16),
+              // Example of a post card, you might want to load real data or make them dynamic based on the selected category or filter
               PostCard(
                 userName: '김김김민교교',
                 title: '모바일플랫폼 다트언어 뿌실 팟 관@@@@@',
@@ -145,17 +159,21 @@ class _CommunityScreenState extends State<CommunityScreen> {
 class CategoryTab extends StatelessWidget {
   final String title;
   final bool isSelected;
+  final Function(String) onSelect;
 
-  CategoryTab({required this.title, this.isSelected = false});
+  CategoryTab({required this.title, this.isSelected = false, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: TextStyle(
-        color: isSelected ? Colors.orange : Colors.grey,
-        fontSize: 16,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    return GestureDetector(
+      onTap: () => onSelect(title),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: isSelected ? Colors.orange : Colors.grey,
+          fontSize: 16,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
       ),
     );
   }
@@ -164,23 +182,27 @@ class CategoryTab extends StatelessWidget {
 class CategoryFilter extends StatelessWidget {
   final String title;
   final bool isSelected;
+  final Function(String) onSelect;
 
-  CategoryFilter({required this.title, this.isSelected = false});
+  CategoryFilter({required this.title, this.isSelected = false, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.orange : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: isSelected ? Colors.white : Colors.grey,
-          fontSize: 14,
+    return GestureDetector(
+      onTap: () => onSelect(title),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.orange : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.grey),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.grey,
+            fontSize: 14,
+          ),
         ),
       ),
     );
