@@ -1,6 +1,36 @@
 import 'package:flutter/material.dart';
 
-class GroupScreen extends StatelessWidget {
+class GroupScreen extends StatefulWidget {
+  @override
+  _GroupScreenState createState() => _GroupScreenState();
+}
+
+class _GroupScreenState extends State<GroupScreen> {
+  int _selectedIndex = 2; // 초기 인덱스를 Group Study로 설정
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/myStudy');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/group_study');
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/community');
+        break;
+      case 4:
+        Navigator.pushNamed(context, '/settings');
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,9 +136,10 @@ class GroupScreen extends StatelessWidget {
             label: 'Setting',
           ),
         ],
-        currentIndex: 2,
+        currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
-        unselectedItemColor: Color(0xFFA0A3B1),
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
         showUnselectedLabels: true,
       ),
     );

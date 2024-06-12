@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.pushReplacementNamed(context, '/myStudy');
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/groupStudy');
+        Navigator.pushReplacementNamed(context, '/group');
         break;
     }
   }
