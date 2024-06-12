@@ -6,7 +6,7 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  int _selectedIndex = 3; // 초기 인덱스를 Community로 설정
+  int _selectedIndex = 3;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -20,16 +20,17 @@ class _CommunityScreenState extends State<CommunityScreen> {
         Navigator.pushNamed(context, '/myStudy');
         break;
       case 2:
-        Navigator.pushNamed(context, '/groups');
+        Navigator.pushNamed(context, '/group');
         break;
       case 3:
         Navigator.pushNamed(context, '/community');
         break;
       case 4:
-        Navigator.pushNamed(context, '/settings');
+        Navigator.pushNamed(context, '/setting');
         break;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

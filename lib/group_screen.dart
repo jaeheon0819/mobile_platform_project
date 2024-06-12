@@ -45,7 +45,7 @@ class _GroupScreenState extends State<GroupScreen> {
                   height: 150,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/Group 6876.png'),
+                      image: AssetImage('assets/images/Group_6876.png'),
                       fit: BoxFit.cover,
                     ),
                   ),
