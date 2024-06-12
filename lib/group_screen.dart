@@ -20,13 +20,13 @@ class _GroupScreenState extends State<GroupScreen> {
         Navigator.pushNamed(context, '/myStudy');
         break;
       case 2:
-        Navigator.pushNamed(context, '/group_study');
+        Navigator.pushNamed(context, '/groupStudy');
         break;
       case 3:
         Navigator.pushNamed(context, '/community');
         break;
       case 4:
-        Navigator.pushNamed(context, '/settings');
+        Navigator.pushNamed(context, '/setting');
         break;
     }
   }

@@ -25,7 +25,7 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
         Navigator.pushReplacementNamed(context, '/myStudy');
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/groupStudy');
+        Navigator.pushReplacementNamed(context, '/group');
         break;
       case 3:
         Navigator.pushReplacementNamed(context, '/community');

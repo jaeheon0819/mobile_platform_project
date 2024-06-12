@@ -6,6 +6,31 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  int _selectedIndex = 4;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/myStudy');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/group');
+        break;
+      case 3:
+        Navigator.pushNamed(context, '/community');
+        break;
+      case 4:
+        Navigator.pushNamed(context, '/setting');
+        break;
+    }
+  }
+
   String nickname = '왕왕준준서서';
   String statusMessage = '';
   String category = '';
@@ -245,32 +270,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.forum),
-            label: 'Co'
-                'mmunity',
+            label: 'Community',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Setting',
           ),
         ],
-        currentIndex: 4,
+        currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          // Handle bottom navigation bar tap
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/myStudy');
-              break;
-          // Add other cases for Group Study and Community if needed
-            case 4:
-              Navigator.pushReplacementNamed(context, '/settings');
-              break;
-          }
-        },
+        onTap: _onItemTapped,
       ),
     );
   }

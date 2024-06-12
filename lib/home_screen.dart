@@ -30,6 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         Navigator.pushReplacementNamed(context, '/group');
         break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/community');
+        break;
+      case 4:
+        Navigator.pushReplacementNamed(context, '/setting');
+        break;
     }
   }
 
@@ -50,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset('assets/logo.png', height: 50),
+                    // Image.asset('assets/logo.png', height: 50),
                     const Text(
                       '단국대 Moon',
                       style: TextStyle(
