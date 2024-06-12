@@ -109,6 +109,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  void _ervicelaw() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Gender'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _buildGenderOption('남성'),
+              _buildGenderOption('여성'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildGenderOption(String value) {
     return ListTile(
       title: Text(value),

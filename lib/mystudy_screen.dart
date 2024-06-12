@@ -1,25 +1,14 @@
 import 'package:flutter/material.dart';
+import 'shared_state.dart';
 import 'dart:async';
 
 class MyStudyScreen extends StatefulWidget {
-  const MyStudyScreen({Key? key}) : super(key: key);
-
   @override
   _MyStudyScreenState createState() => _MyStudyScreenState();
 }
 
 class _MyStudyScreenState extends State<MyStudyScreen> {
   int _selectedIndex = 1;
-  Map<String, Timer?> _timers = {};
-  Map<String, Duration> _durations = {
-    // '운영체제과제': Duration.zero,
-    // '모바일플랫폼': Duration.zero,
-    // '오픈소스활용': Duration.zero,
-    // '모플과제1': Duration.zero,
-    // '토익강의': Duration.zero,
-  };
-  Duration _totalTime = Duration.zero;
-  String? _currentSubject;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -30,7 +19,7 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
         Navigator.pushNamed(context, '/home');
         break;
       case 1:
-        Navigator.pushNamed(context, '/myStudy');
+        Navigator.pushNamed(context, '/study');
         break;
       case 2:
         Navigator.pushNamed(context, '/group');
@@ -44,59 +33,14 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
     }
   }
 
-  void _startTimer(String subject) {
-    _stopAllTimers();
-    setState(() {
-      _currentSubject = subject;
-    });
-    _timers[subject] = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _durations[subject] = _durations[subject]! + const Duration(seconds: 1);
-        _calculateTotalTime();
-      });
-    });
-  }
-
-  void _stopTimer(String subject) {
-    _timers[subject]?.cancel();
-    setState(() {
-      _currentSubject = null;
-    });
-  }
-
-  void _stopAllTimers() {
-    _timers.forEach((subject, timer) {
-      timer?.cancel();
-    });
-  }
-
-  void _calculateTotalTime() {
-    _totalTime = Duration.zero;
-    _durations.forEach((subject, duration) {
-      _totalTime += duration;
-    });
-  }
-
   void _addNewTask(String title) {
     setState(() {
-      _durations[title] = Duration.zero;
-    });
-  }
-
-  void _deleteTask(String title) {
-    setState(() {
-      _durations.remove(title);
-      _timers.remove(title);
-      if (_currentSubject == title) {
-        _currentSubject = null;
-      }
-      _calculateTotalTime();
+      courseNotifier.addCourse(title);
     });
   }
 
   @override
   void dispose() {
-    _stopAllTimers();
     super.dispose();
   }
 
@@ -104,83 +48,99 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return '${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds';
+    return '${twoDigits(duration.inHours)} : $twoDigitMinutes : $twoDigitSeconds';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF03174C),
+      backgroundColor: Color(0xFF03174C),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 150,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/Group 6887.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const Positioned(
-                  top: 50,
-                  left: 0,
-                  right: 0,
-                  child: Text(
-                    'My Study',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontFamily: 'Pretendard',
-                      fontWeight: FontWeight.w700,
-                      height: 1.2,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: Column(
+            children: [
+              Stack(
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(16),
+                    height: 200,
                     decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage('assets/images/Mask Group.png'),
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/Group 6887.png'),
                         fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        _formatDuration(_totalTime),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w200, // 더 얇게 설정
-                          height: 1.2,
-                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  ..._durations.keys.map((title) {
-                    bool isActive = _currentSubject == title;
-                    return _buildStudyItem(title, _durations[title]!, isActive);
-                  }).toList(),
+                  Positioned(
+                    top: 50,
+                    left: 0,
+                    right: 0,
+                    child: Text(
+                      'My Study',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontFamily: 'Pretendard',
+                        fontWeight: FontWeight.w700,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/Mask Group.png'),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: ValueListenableBuilder<List<Course>>(
+                          valueListenable: courseNotifier,
+                          builder: (context, List<Course> courses, child) {
+                            Duration totalTime = courseNotifier.getTotalStudyTime();
+                            return Text(
+                              _formatDuration(totalTime),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 48,
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w200, // 더 얇게 설정
+                                height: 1.2,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ValueListenableBuilder<List<Course>>(
+                      valueListenable: courseNotifier,
+                      builder: (context, List<Course> courses, child) {
+                        return Column(
+                          children: courses.map((course) {
+                            bool isActive = course.isStudying;
+                            return _buildStudyItem(course.name, course.studyTime, isActive);
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -213,8 +173,10 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
         showUnselectedLabels: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddTaskDialog,
-        child: const Icon(Icons.add),
+        onPressed: () {
+          _showAddTaskDialog();
+        },
+        child: Icon(Icons.add),
         backgroundColor: Colors.blue,
       ),
     );
@@ -227,11 +189,11 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFFBAC8FF),
+          backgroundColor: Color(0xFFBAC8FF),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text(
+          title: Text(
             '새 항목',
             style: TextStyle(
               fontFamily: 'Pretendard',
@@ -242,7 +204,7 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
           content: TextField(
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0xFFD6E4FF),
+              fillColor: Color(0xFFD6E4FF),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide.none,
@@ -257,8 +219,8 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text(
-                '취소',
+              child: Text(
+                'cancel',
                 style: TextStyle(
                   color: Colors.grey,
                 ),
@@ -272,13 +234,13 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFBAC8FF),
+                backgroundColor: Color(0xFFBAC8FF),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                '추가',
+              child: Text(
+                'add',
                 style: TextStyle(
                   color: Colors.black,
                 ),
@@ -294,9 +256,9 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
     return GestureDetector(
       onTap: () {
         if (isActive) {
-          _stopTimer(title);
+          courseNotifier.toggleCourseStatus(title);
         } else {
-          _startTimer(title);
+          courseNotifier.toggleCourseStatus(title);
         }
       },
       child: Container(
@@ -317,7 +279,7 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontFamily: 'Pretendard',
@@ -339,17 +301,7 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
                 ],
               ],
             ),
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.white),
-                  onPressed: () {
-                    _deleteTask(title);
-                  },
-                ),
-                Icon(isActive ? Icons.pause : Icons.play_arrow, color: Colors.white),
-              ],
-            ),
+            Icon(isActive ? Icons.pause : Icons.play_arrow, color: Colors.white),
           ],
         ),
       ),

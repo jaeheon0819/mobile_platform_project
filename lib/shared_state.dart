@@ -1,6 +1,5 @@
-import 'dart:async';
-import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class Course {
   String name;
@@ -8,47 +7,69 @@ class Course {
   bool isStudying;
   Timer? timer;
 
-  Course({required this.name, this.studyTime = Duration.zero, this.isStudying = false});
+  Course({
+    required this.name,
+    this.studyTime = Duration.zero,
+    this.isStudying = false,
+  });
 }
 
 class CourseNotifier extends ValueNotifier<List<Course>> {
   CourseNotifier() : super([]);
-  Duration yesterdayStudyTime = Duration.zero;
-
-  UnmodifiableListView<Course> get courses => UnmodifiableListView(value);
 
   void addCourse(String name) {
-    value = [...value, Course(name: name)];
-    notifyListeners();
-  }
-
-  void deleteCourse(String name) {
-    value = value.where((course) => course.name != name).toList();
+    value.add(Course(name: name));
     notifyListeners();
   }
 
   void toggleCourseStatus(String name) {
-    var course = value.firstWhere((course) => course.name == name);
-    if (course.isStudying) {
-      course.timer?.cancel();
-    } else {
-      course.timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        course.studyTime += Duration(seconds: 1);
-        notifyListeners();
-      });
+    for (var course in value) {
+      if (course.name == name) {
+        course.isStudying = !course.isStudying;
+        if (course.isStudying) {
+          course.timer = Timer.periodic(Duration(seconds: 1), (timer) {
+            course.studyTime += Duration(seconds: 1);
+            notifyListeners();
+          });
+        } else {
+          course.timer?.cancel();
+        }
+      } else {
+        course.isStudying = false;
+        course.timer?.cancel();
+      }
     }
-    course.isStudying = !course.isStudying;
     notifyListeners();
   }
 
   Duration getTotalStudyTime() {
-    return value.fold(Duration.zero, (sum, course) => sum + course.studyTime);
+    Duration totalTime = Duration.zero;
+    for (var course in value) {
+      totalTime += course.studyTime;
+    }
+    return totalTime;
   }
 
-  void setYesterdayStudyTime(Duration duration) {
-    yesterdayStudyTime = duration;
+  void updateCourseTime(String name, Duration time) {
+    for (var course in value) {
+      if (course.name == name) {
+        course.studyTime = time;
+      }
+    }
     notifyListeners();
+  }
+
+  void resetAllCourseTimes() {
+    for (var course in value) {
+      course.studyTime = Duration.zero;
+    }
+    notifyListeners();
+  }
+
+  Duration get yesterdayStudyTime {
+    // 어제 공부한 시간 계산 로직을 여기에 추가할 수 있습니다.
+    return Duration(hours: 3, minutes: 30); // 예시로 3시간 30분 설정
   }
 }
 
-final CourseNotifier courseNotifier = CourseNotifier();
+final courseNotifier = CourseNotifier();

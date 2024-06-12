@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'shared_state.dart';
-import 'group_screen.dart';
-import 'mystudy_screen.dart';
 import 'package:intl/intl.dart';  // 날짜 포맷을 위해 intl 패키지 사용
 
 class HomeScreen extends StatefulWidget {
@@ -39,10 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _toggleCourseStatus(String courseName) {
-    courseNotifier.toggleCourseStatus(courseName);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Image.asset('assets/KakaoTalk_Photo_2024-06-13-02-52-22.png', height: 70),
+                    Image.asset('assets/images/dkubear.png', height: 70),
                     const Text(
                       '  공부할래??',
                       style: TextStyle(
@@ -106,26 +100,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 ValueListenableBuilder<List<Course>>(
                   valueListenable: courseNotifier,
                   builder: (context, List<Course> courses, child) {
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              for (var course in courses)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: CourseCard(
-                                    title: course.name,
-                                    time: _formatDuration(course.studyTime),
-                                    buttonText: course.isStudying ? 'STOP' : 'START',
-                                    backgroundColor: Colors.orange[100]!,
-                                    onPressed: () => _toggleCourseStatus(course.name),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: courses.map((course) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: HomeCourseCard(
+                              title: course.name,
+                              time: _formatDuration(course.studyTime),
+                              backgroundColor: Colors.orange[100]!,
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     );
                   },
                 ),
@@ -283,19 +271,15 @@ class StudyTimeCard extends StatelessWidget {
   }
 }
 
-class CourseCard extends StatelessWidget {
+class HomeCourseCard extends StatelessWidget {
   final String title;
   final String time;
-  final String buttonText;
   final Color backgroundColor;
-  final VoidCallback onPressed;
 
-  const CourseCard({
+  const HomeCourseCard({
     required this.title,
     required this.time,
-    required this.buttonText,
     required this.backgroundColor,
-    required this.onPressed,
   });
 
   @override
@@ -322,27 +306,6 @@ class CourseCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ),
-              child: Text(
-                buttonText,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
             ),
           ),
         ],
