@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'shared_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -9,30 +9,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Timer _timer;
-  Duration _studyTime = Duration.zero;
-  Duration _yesterdayStudyTime = const Duration(hours: 3, minutes: 30);
   int _selectedIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _studyTime += const Duration(seconds: 1);
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -62,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Image.asset('assets/images2.jpg', height: 50),
+                    Image.asset('assets/logo.png', height: 50),
                     const Text(
                       '단국대 Moon',
                       style: TextStyle(
@@ -90,37 +67,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 20),
                 StudyTimeCard(
                   title: "Today's Study Time",
-                  time: _formatDuration(_studyTime),
+                  time: '00:00:00',
                   date: '2024 04 24',
                   day: 'Wednesday',
                   backgroundColor: Colors.red[100]!,
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CourseCard(
-                        title: '모바일플랫폼',
-                        time: '9:00 - 12:00',
-                        buttonText: 'START',
-                        backgroundColor: Colors.orange[100]!,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: CourseCard(
-                        title: '오픈소스활용',
-                        time: '13:00 - 16:00',
-                        buttonText: 'START',
-                        backgroundColor: Colors.orange[100]!,
-                      ),
-                    ),
-                  ],
+                ValueListenableBuilder<List<Course>>(
+                  valueListenable: courseNotifier,
+                  builder: (context, List<Course> courses, child) {
+                    return Row(
+                      children: courses.map((course) {
+                        return Expanded(
+                          child: CourseCard(
+                            title: course.name,
+                            time: _formatDuration(course.studyTime),
+                            buttonText: 'START',
+                            backgroundColor: Colors.orange[100]!,
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
                 StudyTimeCard(
                   title: "Yesterday's Study Time",
-                  time: _formatDuration(_yesterdayStudyTime),
+                  time: '03:30:00',
                   date: '2024 04 24',
                   day: 'Wednesday',
                   backgroundColor: Colors.red[100]!,

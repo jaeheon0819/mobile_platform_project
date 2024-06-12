@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'shared_state.dart';
 
 class MyStudyScreen extends StatefulWidget {
   @override
@@ -7,6 +10,8 @@ class MyStudyScreen extends StatefulWidget {
 
 class _MyStudyScreenState extends State<MyStudyScreen> {
   int _selectedIndex = 1;
+  TextEditingController _courseController = TextEditingController();
+  Timer? _timer;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -19,8 +24,31 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
       case 1:
         Navigator.pushReplacementNamed(context, '/myStudy');
         break;
-    // 추가적인 화면이 있다면 여기 추가
     }
+  }
+
+  void _toggleCourseStatus(String courseName) {
+    var course = courseNotifier.courses.firstWhere((course) => course.name == courseName);
+    if (course.isStudying) {
+      _timer?.cancel();
+    } else {
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        courseNotifier.updateStudyTime(courseName, Duration(seconds: 1));
+      });
+    }
+    courseNotifier.toggleCourseStatus(courseName);
+  }
+
+  void _addCourse() {
+    String newCourse = _courseController.text;
+    if (newCourse.isNotEmpty) {
+      courseNotifier.addCourse(newCourse);
+      _courseController.clear();
+    }
+  }
+
+  void _deleteCourse(String courseName) {
+    courseNotifier.deleteCourse(courseName);
   }
 
   @override
@@ -64,30 +92,55 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
                       color: Colors.black,
                     ),
                   ),
-                  ListTile(
-                    title: Text("운영체제 과제"),
-                    subtitle: Text("과제"),
-                    trailing: Icon(Icons.play_arrow),
+                  ValueListenableBuilder<List<Course>>(
+                    valueListenable: courseNotifier,
+                    builder: (context, List<Course> courses, child) {
+                      return Column(
+                        children: courses.map((course) {
+                          return ListTile(
+                            title: InkWell(
+                              onTap: () => print('${course.name} tapped'),
+                              child: Text(course.name),
+                            ),
+                            subtitle: Text("과제"),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    course.isStudying ? Icons.pause : Icons.play_arrow,
+                                  ),
+                                  onPressed: () => _toggleCourseStatus(course.name),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () => _deleteCourse(course.name),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
                   ),
-                  ListTile(
-                    title: Text("모바일 플랫폼"),
-                    subtitle: Text("9:00 - 12:00"),
-                    trailing: Icon(Icons.pause),
-                  ),
-                  ListTile(
-                    title: Text("오픈 소스 활용"),
-                    subtitle: Text("13:00 - 16:00"),
-                    trailing: Icon(Icons.play_arrow),
-                  ),
-                  ListTile(
-                    title: Text("모플 과제1"),
-                    subtitle: Text("과제"),
-                    trailing: Icon(Icons.play_arrow),
-                  ),
-                  ListTile(
-                    title: Text("토익 강의"),
-                    subtitle: Text("20:00 - 21:00"),
-                    trailing: Icon(Icons.play_arrow),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _courseController,
+                            decoration: InputDecoration(
+                              labelText: '과목명을 입력하세요',
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: _addCourse,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
