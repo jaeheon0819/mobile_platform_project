@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset('assets/logo.png', height: 50),
+                    // Image.asset('assets/images2.jpg', height: 50),
                     const Text(
                       '단국대 Moon',
                       style: TextStyle(
