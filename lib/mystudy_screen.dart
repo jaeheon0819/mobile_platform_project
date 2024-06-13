@@ -9,6 +9,7 @@ class MyStudyScreen extends StatefulWidget {
 
 class _MyStudyScreenState extends State<MyStudyScreen> {
   int _selectedIndex = 1;
+  Timer? _timer;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -33,6 +34,26 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
     }
   }
 
+  void _startTimer(String subject) {
+    courseNotifier.toggleCourseStatus(subject);
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      for (var course in courseNotifier.value) {
+        if (course.isStudying) {
+          setState(() {
+            course.studyTime += Duration(seconds: 1);
+            courseNotifier.updateCourseTime(course.name, course.studyTime);
+          });
+        }
+      }
+    });
+  }
+
+  void _stopTimer(String subject) {
+    _timer?.cancel();
+    courseNotifier.toggleCourseStatus(subject);
+  }
+
   void _addNewTask(String title) {
     setState(() {
       courseNotifier.addCourse(title);
@@ -41,6 +62,7 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
 
   @override
   void dispose() {
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -256,9 +278,9 @@ class _MyStudyScreenState extends State<MyStudyScreen> {
     return GestureDetector(
       onTap: () {
         if (isActive) {
-          courseNotifier.toggleCourseStatus(title);
+          _stopTimer(title);
         } else {
-          courseNotifier.toggleCourseStatus(title);
+          _startTimer(title);
         }
       },
       child: Container(

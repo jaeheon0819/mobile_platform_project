@@ -32,9 +32,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   String nickname = '왕왕준준서서';
-  String gender = '';
-  String department = '';
-  String studentId = '';
+  String statusMessage = '';
+  String category = '';
+  String region = '';
+  String language = '';
 
   void _editSetting(String title, String currentValue, Function(String) onSave) {
     TextEditingController _controller = TextEditingController(text: currentValue);
@@ -70,17 +71,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _selectGender() {
+  void _selectCategory() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Select Gender'),
+          title: Text('Select Category'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _buildGenderOption('남성'),
-              _buildGenderOption('여성'),
+              _buildCategoryOption('SW융합대학'),
+              _buildCategoryOption('사회과학대학'),
+              _buildCategoryOption('문과대학'),
+              _buildCategoryOption('사범대학'),
             ],
           ),
         );
@@ -88,20 +91,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _selectDepartment() {
+  void _selectRegion() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Select Department'),
+          title: Text('Select Region'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _buildDepartmentOption('소프트웨어학과'),
-              _buildDepartmentOption('정보통계학과'),
-              _buildDepartmentOption('컴퓨터공학과'),
-              _buildDepartmentOption('산업보안학과'),
-              _buildDepartmentOption('모바일시스템학과'),
+              _buildRegionOption('SOUTH KOREA'),
+              _buildRegionOption('USA'),
+              _buildRegionOption('CANADA'),
+              _buildRegionOption('JAPAN'),
+              _buildRegionOption('CHINA'),
+              _buildRegionOption('FRANCE'),
+              _buildRegionOption('GERMANY'),
+              _buildRegionOption('UK'),
+              _buildRegionOption('AUSTRALIA'),
+              _buildRegionOption('INDIA'),
             ],
           ),
         );
@@ -109,17 +117,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _ervicelaw() {
+  void _selectLanguage() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Select Gender'),
+          title: Text('Select Language'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _buildGenderOption('남성'),
-              _buildGenderOption('여성'),
+              _buildLanguageOption('한국어'),
+              _buildLanguageOption('English'),
+              _buildLanguageOption('日本語'),
+              _buildLanguageOption('中文'),
+              _buildLanguageOption('Français'),
+              _buildLanguageOption('Deutsch'),
+              _buildLanguageOption('Español'),
+              _buildLanguageOption('Italiano'),
+              _buildLanguageOption('Русский'),
+              _buildLanguageOption('Português'),
             ],
           ),
         );
@@ -127,26 +143,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildGenderOption(String value) {
+  Widget _buildCategoryOption(String value) {
     return ListTile(
       title: Text(value),
-      trailing: gender == value ? Icon(Icons.check, color: Colors.blue) : null,
+      trailing: category == value ? Icon(Icons.check, color: Colors.blue) : null,
       onTap: () {
         setState(() {
-          gender = value;
+          category = value;
         });
         Navigator.of(context).pop();
       },
     );
   }
 
-  Widget _buildDepartmentOption(String value) {
+  Widget _buildRegionOption(String value) {
     return ListTile(
       title: Text(value),
-      trailing: department == value ? Icon(Icons.check, color: Colors.blue) : null,
+      trailing: region == value ? Icon(Icons.check, color: Colors.blue) : null,
       onTap: () {
         setState(() {
-          department = value;
+          region = value;
+        });
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget _buildLanguageOption(String value) {
+    return ListTile(
+      title: Text(value),
+      trailing: language == value ? Icon(Icons.check, color: Colors.blue) : null,
+      onTap: () {
+        setState(() {
+          language = value;
         });
         Navigator.of(context).pop();
       },
@@ -192,13 +221,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 nickname = newNickname;
               });
             }),
-            _buildSettingItem('성별', gender, _selectGender),
-            _buildSettingItem('학과', department, _selectDepartment),
-            _buildSettingItem('학번', studentId, () {
-              _editSetting('학번', studentId, (newStudentId) {
-                studentId = newStudentId;
+            _buildSettingItem('상태 메시지', statusMessage, () {
+              _editSetting('상태 메시지', statusMessage, (newStatusMessage) {
+                statusMessage = newStatusMessage;
               });
             }),
+            _buildSettingItem('카테고리', category, _selectCategory),
+            _buildSettingItem('지역선택', region, _selectRegion),
+            _buildSettingItem('언어선택', language, _selectLanguage),
             Spacer(),
             TextButton(
               onPressed: () {

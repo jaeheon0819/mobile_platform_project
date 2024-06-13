@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'post_notifier.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'new_post.dart';
+import 'dart:convert';
 
 class CommunityScreen extends StatefulWidget {
   @override
@@ -9,8 +10,13 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen> {
   int _selectedIndex = 3; // 초기 인덱스를 Community로 설정
-  String _selectedCategory = '전체';
-  String _selectedFilter = '전체';
+  List<Map<String, String>> _posts = [];  // 글 목록을 저장할 리스트
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPosts();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -35,77 +41,36 @@ class _CommunityScreenState extends State<CommunityScreen> {
     }
   }
 
-  void _onCategorySelected(String category) {
-    setState(() {
-      _selectedCategory = category;
-    });
-  }
-
-  void _onFilterSelected(String filter) {
-    setState(() {
-      _selectedFilter = filter;
-    });
-  }
-
-  void _showAddPostDialog() {
-    String userName = '';
-    String title = '';
-    String content = '';
-    String tag = '';
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('새 글 추가'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                onChanged: (value) {
-                  userName = value;
-                },
-                decoration: InputDecoration(labelText: '이름'),
-              ),
-              TextField(
-                onChanged: (value) {
-                  title = value;
-                },
-                decoration: InputDecoration(labelText: '제목'),
-              ),
-              TextField(
-                onChanged: (value) {
-                  content = value;
-                },
-                decoration: InputDecoration(labelText: '내용'),
-              ),
-              TextField(
-                onChanged: (value) {
-                  tag = value;
-                },
-                decoration: InputDecoration(labelText: '해시태그'),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('추가'),
-              onPressed: () {
-                final postNotifier = Provider.of<PostNotifier>(context, listen: false);
-                postNotifier.addPost(Post(userName: userName, title: title, content: content, tag: tag));
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+  Future<void> _navigateToNewPostScreen() async {
+    final newPost = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewPostScreen(),
+      ),
     );
+
+    if (newPost != null) {
+      setState(() {
+        _posts.add(newPost);
+        _savePosts();
+      });
+    }
+  }
+
+  Future<void> _savePosts() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> postsJson = _posts.map((post) => jsonEncode(post)).toList();
+    await prefs.setStringList('posts', postsJson);
+  }
+
+  Future<void> _loadPosts() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String>? postsJson = prefs.getStringList('posts');
+    if (postsJson != null) {
+      setState(() {
+        _posts = postsJson.map((postJson) => Map<String, String>.from(jsonDecode(postJson))).toList();
+      });
+    }
   }
 
   @override
@@ -114,7 +79,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(bottom: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -158,41 +123,37 @@ class _CommunityScreenState extends State<CommunityScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  CategoryTab(title: '전체', isSelected: _selectedCategory == '전체', onSelect: _onCategorySelected),
-                  CategoryTab(title: '자유', isSelected: _selectedCategory == '자유', onSelect: _onCategorySelected),
-                  CategoryTab(title: '질문', isSelected: _selectedCategory == '질문', onSelect: _onCategorySelected),
-                  CategoryTab(title: '모집', isSelected: _selectedCategory == '모집', onSelect: _onCategorySelected),
+                  CategoryTab(title: '전체', isSelected: true),
+                  CategoryTab(title: '자유'),
+                  CategoryTab(title: '질문'),
+                  CategoryTab(title: '모집'),
                 ],
               ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  CategoryFilter(title: '전체', isSelected: _selectedFilter == '전체', onSelect: _onFilterSelected),
-                  CategoryFilter(title: '문과대학', isSelected: _selectedFilter == '문과대학', onSelect: _onFilterSelected),
-                  CategoryFilter(title: 'SW융합대학', isSelected: _selectedFilter == 'SW융합대학', onSelect: _onFilterSelected),
-                  CategoryFilter(title: '법과대학', isSelected: _selectedFilter == '법과대학', onSelect: _onFilterSelected),
+                  CategoryFilter(title: '전체', isSelected: true),
+                  CategoryFilter(title: '문과대학'),
+                  CategoryFilter(title: 'SW융합대학'),
+                  CategoryFilter(title: '법과대학'),
                 ],
               ),
               const SizedBox(height: 16),
-              Consumer<PostNotifier>(
-                builder: (context, postNotifier, child) {
-                  return Column(
-                    children: postNotifier.posts.map((post) => PostCard(
-                      userName: post.userName,
-                      title: post.title,
-                      content: post.content,
-                      tag: post.tag,
-                    )).toList(),
-                  );
-                },
-              ),
+              ..._posts.map((post) {
+                return PostCard(
+                  userName: '사용자', // 사용자명을 받아와야 하면 이 부분을 수정하세요
+                  title: post['title']!,
+                  content: post['content']!,
+                  tag: post['subCategory']!,
+                );
+              }).toList(),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddPostDialog,
+        onPressed: _navigateToNewPostScreen,
         child: Icon(Icons.add),
         backgroundColor: Colors.orange,
       ),
@@ -232,21 +193,17 @@ class _CommunityScreenState extends State<CommunityScreen> {
 class CategoryTab extends StatelessWidget {
   final String title;
   final bool isSelected;
-  final Function(String) onSelect;
 
-  CategoryTab({required this.title, this.isSelected = false, required this.onSelect});
+  CategoryTab({required this.title, this.isSelected = false});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onSelect(title),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: isSelected ? Colors.orange : Colors.grey,
-          fontSize: 16,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
+    return Text(
+      title,
+      style: TextStyle(
+        color: isSelected ? Colors.orange : Colors.grey,
+        fontSize: 16,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );
   }
@@ -255,27 +212,23 @@ class CategoryTab extends StatelessWidget {
 class CategoryFilter extends StatelessWidget {
   final String title;
   final bool isSelected;
-  final Function(String) onSelect;
 
-  CategoryFilter({required this.title, this.isSelected = false, required this.onSelect});
+  CategoryFilter({required this.title, this.isSelected = false});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onSelect(title),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.orange : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.grey,
-            fontSize: 14,
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.orange : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey),
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: isSelected ? Colors.white : Colors.grey,
+          fontSize: 14,
         ),
       ),
     );
